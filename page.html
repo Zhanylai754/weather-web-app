@@ -1,0 +1,732 @@
+﻿<!DOCTYPE html>
+
+<html lang="ru" class="smooth">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+	<meta charset="utf-8" />
+
+	<!--
+	===========================================================================================================
+
+	Страница представляет несколько экранов мобильного приложения "Погода".
+	Каждый экран описан элементом <section>. Размер экрана 360px × 640px.
+
+	Все иконки, используемые в разметке, являются глифами шрифта "Font Awesome",
+	который уже импортирован и прикреплен к странице (весовая категория 300).
+
+	По умолчанию иконочные глифы представлены в псевдоэлементах `:before` через свойство {content}.
+	Псевдоэлемент `:before` присоединяется к элементам с классом `.fal` или `.fa-light`
+	Комбинированный класс имя которого начинается с префикса `.fa-` назначает конкретную иконку.
+	Имена классов для иконочных глифов можно брать с официальной страницы шрифта
+	https://fontawesome.com/search?s=light&f=classic&o=r
+
+	===========================================================================================================
+
+	Используемые изображения расположены по пути в той же папке, что и эта страница.
+	Все используемые в этом тесте шрифты уже импортированы и прикреплены к странице.
+	Для всей страницы уже выставлен базовый размер шрифта: 20px
+
+	===========================================================================================================
+
+	У всех элементов уже обнулены все отступы, которые у них были по умолчанию,
+	а также выстален режим размеров:
+
+	* { margin: 0; padding: 0; box-sizing: border-box; outline: none }
+
+	===========================================================================================================
+	-->
+
+	<style>
+		/*===========================================================================================================*/
+		/* Шрифты
+		/*===========================================================================================================*/
+
+		@import url('/font/awesome.css');
+		@import url('https://fonts.googleapis.com/css?family=Work+Sans:300&display=swap');
+
+		/*===========================================================================================================*/
+		/* Глобальные стили
+		/*===========================================================================================================*/
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			outline: none;
+		}
+
+		html, body, section {
+			overflow: hidden;
+			min-width: 24rem;
+			font-family: 'Work Sans', sans-serif;
+			font-size: 20px;
+			color: rgba(255,255,255,0.75);
+		}
+
+		html, section {
+			width: 100vw;
+			height: 100vh
+		}
+
+			html.smooth {
+				scroll-behavior: smooth
+			}
+
+		body {
+			width: 300vw;
+			height: 200vh;
+		}
+
+		section {
+			float: left;
+			padding: calc(50vh - 16rem) calc(50vw - 12rem);
+			background-position: center;
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+			background-size: cover;
+		}
+
+			section:nth-child(3n+4) {
+				clear: left
+			}
+
+		a {
+			text-decoration: none
+		}
+
+		ul {
+			list-style: none inside
+		}
+
+		hr.separator {
+			clear: both;
+			height: 1px;
+			margin: 1rem auto;
+			border: none;
+			background-color: rgba(255,255,255,0.1);
+		}
+
+		.screen {
+			float: left;
+			width: calc(100% - 6rem);
+			height: 100%;
+			margin: 0 1rem;
+			padding: 1rem;
+			box-shadow: 0 0 1rem -0.5rem black;
+			background-image: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6) calc(100% / 3));
+		}
+
+		.navigator {
+			display: block;
+			float: left;
+			width: 2rem;
+			height: 2rem;
+			margin-top: 15rem;
+			font-size: 1.5rem;
+			line-height: 2rem;
+			text-align: center;
+			color: rgba(255,255,255,0.75);
+		}
+
+			.navigator:hover:before,
+			.menu-button:hover:before {
+				color: black
+			}
+
+		.screen-header {
+			overflow: hidden
+		}
+
+		.screen-header-center {
+			float: left;
+			width: calc(100% - 4rem);
+			text-align: center;
+		}
+
+		.screen-title {
+			font-size: 1.4rem;
+			font-weight: 300;
+			line-height: 2rem;
+		}
+
+		.screen-time {
+			display: block;
+			font-size: 0.8rem;
+			line-height: 1rem;
+		}
+
+		.menu-button {
+			float: left;
+			line-height: 2rem;
+			font-size: 1.2rem;
+			text-align: center;
+			cursor: pointer;
+		}
+
+			.menu-button,
+			.menu-button:before {
+				display: block;
+				width: 2rem;
+				height: 2rem;
+				line-height: 2rem;
+			}
+
+		.now {
+			margin-top: 2rem
+		}
+
+		.now-state {
+			display: block;
+			height: 2rem;
+			font-size: 1.8rem;
+			line-height: 2rem;
+		}
+
+			.now-state:before {
+				margin-right: 0.5rem
+			}
+
+		.now-data {
+			overflow: hidden;
+			margin-top: 2rem
+		}
+
+		.now-temperature {
+			display: block;
+			width: 60%;
+			float: left;
+			font-size: 5rem;
+			line-height: 4rem;
+			text-shadow: 0.02em 0.02em 0 rgba(0,0,0,0.2);
+		}
+
+		.today-list {
+			width: 40%;
+			float: right
+		}
+
+		.now-temperature:after,
+		.today-item:after {
+			content: '°'
+		}
+
+		.today-item {
+			display: block;
+			line-height: 2rem
+		}
+
+			.today-item:before {
+				display: block;
+				float: left;
+				width: 50%;
+				font-size: 0.75rem;
+			}
+
+			.today-item.max:before {
+				content: 'day'
+			}
+
+			.today-item.min:before {
+				content: 'night'
+			}
+
+			.today-item.min {
+				border-top: 1px solid rgba(255,255,255,0.1)
+			}
+
+		.details-list {
+			overflow: hidden;
+			font-size: 0.6rem;
+			text-align: center;
+		}
+
+		.details-item {
+			float: left;
+			width: 25%;
+			line-height: 1rem;
+		}
+
+			.details-item:before {
+				display: block;
+				font-size: 1rem
+			}
+
+			.details-item.fa-wind:after {
+				content: ' km/h'
+			}
+
+			.details-item.fa-raindrops:after,
+			.details-item.fa-humidity:after {
+				content: ' %'
+			}
+
+		.sun-ecliptic {
+			width: 12rem;
+			height: 3rem;
+			margin: auto;
+			border: 1px dashed rgba(255,255,255,0.5);
+			border-bottom: none;
+			border-top-left-radius: 50% 100%;
+			border-top-right-radius: 50% 100%;
+		}
+
+		.sun-position {
+			overflow: hidden;
+			margin-top: 0.5rem;
+			font-size: 0.6rem;
+			line-height: 1rem;
+			text-align: center;
+		}
+
+		.sun .fa-sunrise,
+		.sun .fa-sunset {
+			width: 4rem
+		}
+
+		.sun .fal:before {
+			display: block;
+			font-size: 1rem;
+			line-height: 1rem;
+		}
+
+		.sun .fa-sunrise {
+			float: left
+		}
+
+		.sun .fa-sunset {
+			float: right
+		}
+
+		.sun .fa-moon-stars:before {
+			display: inline-block;
+			width: 1rem;
+			height: 1rem
+		}
+
+		.prognoz-list {
+			overflow: hidden
+		}
+
+		.prognoz-item {
+			float: left;
+			width: calc(100% / 8);
+			font-size: 0.5rem;
+			line-height: 1rem;
+			text-align: center;
+		}
+
+			.prognoz-item:nth-child(1)::marker {
+				content: '08:00'
+			}
+
+			.prognoz-item:nth-child(2)::marker {
+				content: '10:00'
+			}
+
+			.prognoz-item:nth-child(3)::marker {
+				content: '12:00'
+			}
+
+			.prognoz-item:nth-child(4)::marker {
+				content: '14:00'
+			}
+
+			.prognoz-item:nth-child(5)::marker {
+				content: '16:00'
+			}
+
+			.prognoz-item:nth-child(6)::marker {
+				content: '18:00'
+			}
+
+			.prognoz-item:nth-child(7)::marker {
+				content: '20:00'
+			}
+
+			.prognoz-item:nth-child(8)::marker {
+				content: '22:00'
+			}
+
+			.prognoz-item:before,
+			.prognoz-item::marker {
+				display: block
+			}
+
+			.prognoz-item:after {
+				content: '°'
+			}
+	</style>
+
+	<title>Weather – Mobile Application</title>
+</head>
+<body>
+
+<section id="london" style="background-image: url(img/bg-london.jpg)">
+	<a href="#sydney" class="navigator fal fa-chevron-left"></a>
+	<div class="screen">
+		<header class="screen-header">
+			<span class="menu-button fal fa-bars"></span>
+			<div class="screen-header-center">
+				<h2 class="screen-title">London</h2>
+				<span class="screen-time">Mon, 13:30</span>
+			</div>
+			<span class="menu-button fal fa-plus"></span>
+		</header>
+
+		<hr class="separator" />
+
+		<div class="now">
+			<span class="now-state fal fa-fog">Fog</span>
+			<div class="now-data">
+				<span class="now-temperature">18</span>
+				<ul class="today-list">
+					<li class="today-item max">24</li>
+					<li class="today-item min">12</li>
+				</ul>
+			</div>
+		</div>
+
+		<hr class="separator" />
+
+		<ul class="details-list">
+			<li class="details-item fal fa-wind">13</li>
+			<li class="details-item fal fa-windsock">NE</li>
+			<li class="details-item fal fa-raindrops">40</li>
+			<li class="details-item fal fa-humidity">85</li>
+		</ul>
+
+		<hr class="separator" />
+
+		<div class="sun">
+			<hr class="sun-ecliptic" />
+			<div class="sun-position">
+				<span class="fal fa-sunrise">05:45</span>
+				<span class="fal fa-moon-stars"></span>
+				<span class="fal fa-sunset">18:28</span>
+			</div>
+		</div>
+
+		<hr class="separator" />
+
+		<ul class="prognoz-list">
+			<li class="prognoz-item fal fa-cloud">12</li>
+			<li class="prognoz-item fal fa-cloud">15</li>
+			<li class="prognoz-item fal fa-cloud">18</li>
+			<li class="prognoz-item fal fa-cloud">20</li>
+			<li class="prognoz-item fal fa-cloud">22</li>
+			<li class="prognoz-item fal fa-cloud">19</li>
+			<li class="prognoz-item fal fa-cloud">15</li>
+			<li class="prognoz-item fal fa-cloud">13</li>
+		</ul>
+	</div>
+	<a href="#moscow" class="navigator fal fa-chevron-right"></a>
+</section>
+
+<section id="moscow" style="background-image: url(img/bg-moscow.jpg)">
+	<a href="#london" class="navigator fal fa-chevron-left"></a>
+	<div class="screen">
+		<header class="screen-header">
+			<span class="menu-button fal fa-bars"></span>
+			<div class="screen-header-center">
+				<h2 class="screen-title">Moscow</h2>
+				<span class="screen-time">Mon, 16:30</span>
+			</div>
+			<span class="menu-button fal fa-plus"></span>
+		</header>
+
+		<hr class="separator" />
+
+		<div class="now">
+			<span class="now-state fal fa-cloud-snow">Snow</span>
+			<div class="now-data">
+				<span class="now-temperature">-8</span>
+				<ul class="today-list">
+					<li class="today-item max">-5</li>
+					<li class="today-item min">-12</li>
+				</ul>
+			</div>
+		</div>
+
+		<hr class="separator" />
+
+		<ul class="details-list">
+			<li class="details-item fal fa-wind">5</li>
+			<li class="details-item fal fa-windsock">SE</li>
+			<li class="details-item fal fa-raindrops">20</li>
+			<li class="details-item fal fa-humidity">60</li>
+		</ul>
+
+		<hr class="separator" />
+
+		<div class="sun">
+			<hr class="sun-ecliptic" />
+			<div class="sun-position">
+				<span class="fal fa-sunrise">07:32</span>
+				<span class="fal fa-moon-stars"></span>
+				<span class="fal fa-sunset">17:02</span>
+			</div>
+		</div>
+
+		<hr class="separator" />
+
+		<ul class="prognoz-list">
+			<li class="prognoz-item fal fa-cloud">-12</li>
+			<li class="prognoz-item fal fa-cloud-snow">-10</li>
+			<li class="prognoz-item fal fa-cloud-snow">-8</li>
+			<li class="prognoz-item fal fa-cloud-snow">-5</li>
+			<li class="prognoz-item fal fa-cloud-snow">-8</li>
+			<li class="prognoz-item fal fa-cloud">-10</li>
+			<li class="prognoz-item fal fa-cloud">-11</li>
+			<li class="prognoz-item fal fa-cloud">-11</li>
+		</ul>
+	</div>
+	<a href="#paris" class="navigator fal fa-chevron-right"></a>
+</section>
+
+<section id="paris" style="background-image: url(img/bg-paris.jpg)">
+	<a href="#moscow" class="navigator fal fa-chevron-left"></a>
+	<div class="screen">
+		<header class="screen-header">
+			<span class="menu-button fal fa-bars"></span>
+			<div class="screen-header-center">
+				<h2 class="screen-title">Paris</h2>
+				<span class="screen-time">Mon, 14:30</span>
+			</div>
+			<span class="menu-button fal fa-plus"></span>
+		</header>
+
+		<hr class="separator" />
+
+		<div class="now">
+			<span class="now-state fal fa-cloud-rain">Rain</span>
+			<div class="now-data">
+				<span class="now-temperature">14</span>
+				<ul class="today-list">
+					<li class="today-item max">20</li>
+					<li class="today-item min">10</li>
+				</ul>
+			</div>
+		</div>
+
+		<hr class="separator" />
+
+		<ul class="details-list">
+			<li class="details-item fal fa-wind">6</li>
+			<li class="details-item fal fa-windsock">S</li>
+			<li class="details-item fal fa-raindrops">80</li>
+			<li class="details-item fal fa-humidity">90</li>
+		</ul>
+
+		<hr class="separator" />
+
+		<div class="sun">
+			<hr class="sun-ecliptic" />
+			<div class="sun-position">
+				<span class="fal fa-sunrise">06:03</span>
+				<span class="fal fa-moon-stars"></span>
+				<span class="fal fa-sunset">18:15</span>
+			</div>
+		</div>
+
+		<hr class="separator" />
+
+		<ul class="prognoz-list">
+			<li class="prognoz-item fal fa-cloud">11</li>
+			<li class="prognoz-item fal fa-cloud">12</li>
+			<li class="prognoz-item fal fa-cloud">12</li>
+			<li class="prognoz-item fal fa-cloud">14</li>
+			<li class="prognoz-item fal fa-cloud">13</li>
+			<li class="prognoz-item fal fa-cloud">12</li>
+			<li class="prognoz-item fal fa-cloud">11</li>
+			<li class="prognoz-item fal fa-cloud">10</li>
+		</ul>
+	</div>
+	<a href="#new-york" class="navigator fal fa-chevron-right"></a>
+</section>
+
+<section id="new-york" style="background-image: url(img/bg-new-york.jpg)">
+	<a href="#paris" class="navigator fal fa-chevron-left"></a>
+	<div class="screen">
+		<header class="screen-header">
+			<span class="menu-button fal fa-bars"></span>
+			<div class="screen-header-center">
+				<h2 class="screen-title">New York</h2>
+				<span class="screen-time">Mon, 09:30</span>
+			</div>
+			<span class="menu-button fal fa-plus"></span>
+		</header>
+
+		<hr class="separator" />
+
+		<div class="now">
+			<span class="now-state fal fa-thunderstorm">Storm</span>
+			<div class="now-data">
+				<span class="now-temperature">20</span>
+				<ul class="today-list">
+					<li class="today-item max">22</li>
+					<li class="today-item min">10</li>
+				</ul>
+			</div>
+		</div>
+
+		<hr class="separator" />
+
+		<ul class="details-list">
+			<li class="details-item fal fa-wind">20</li>
+			<li class="details-item fal fa-windsock">N</li>
+			<li class="details-item fal fa-raindrops">90</li>
+			<li class="details-item fal fa-humidity">95</li>
+		</ul>
+
+		<hr class="separator" />
+
+		<div class="sun">
+			<hr class="sun-ecliptic" />
+			<div class="sun-position">
+				<span class="fal fa-sunrise">05:40</span>
+				<span class="fal fa-moon-stars"></span>
+				<span class="fal fa-sunset">17:35</span>
+			</div>
+		</div>
+
+		<hr class="separator" />
+
+		<ul class="prognoz-list">
+			<li class="prognoz-item fal fa-clouds">18</li>
+			<li class="prognoz-item fal fa-clouds">20</li>
+			<li class="prognoz-item fal fa-cloud-showers">22</li>
+			<li class="prognoz-item fal fa-cloud-showers">20</li>
+			<li class="prognoz-item fal fa-thunderstorm">18</li>
+			<li class="prognoz-item fal fa-thunderstorm">16</li>
+			<li class="prognoz-item fal fa-cloud-showers">14</li>
+			<li class="prognoz-item fal fa-cloud-showers">12</li>
+		</ul>
+	</div>
+	<a href="#beijing" class="navigator fal fa-chevron-right"></a>
+</section>
+
+<section id="beijing" style="background-image: url(img/bg-beijing.jpg)">
+	<a href="#new-york" class="navigator fal fa-chevron-left"></a>
+	<div class="screen">
+		<header class="screen-header">
+			<span class="menu-button fal fa-bars"></span>
+			<div class="screen-header-center">
+				<h2 class="screen-title">Beijing</h2>
+				<span class="screen-time">Mon, 21:30</span>
+			</div>
+			<span class="menu-button fal fa-plus"></span>
+		</header>
+
+		<hr class="separator" />
+
+		<div class="now">
+			<span class="now-state fal fa-smog">Smog</span>
+			<div class="now-data">
+				<span class="now-temperature">17</span>
+				<ul class="today-list">
+					<li class="today-item max">18</li>
+					<li class="today-item min">10</li>
+				</ul>
+			</div>
+		</div>
+
+		<hr class="separator" />
+
+		<ul class="details-list">
+			<li class="details-item fal fa-wind">3</li>
+			<li class="details-item fal fa-windsock">W</li>
+			<li class="details-item fal fa-raindrops">30</li>
+			<li class="details-item fal fa-humidity">52</li>
+		</ul>
+
+		<hr class="separator" />
+
+		<div class="sun ">
+			<hr class="sun-ecliptic" />
+			<div class="sun-position">
+				<span class="fal fa-sunrise">06:40</span>
+				<span class="fal fa-moon-stars"></span>
+				<span class="fal fa-sunset">17:38</span>
+			</div>
+		</div>
+
+		<hr class="separator" />
+
+		<ul class="prognoz-list">
+			<li class="prognoz-item fal fa-smog">10</li>
+			<li class="prognoz-item fal fa-smog">12</li>
+			<li class="prognoz-item fal fa-smog">15</li>
+			<li class="prognoz-item fal fa-smog">18</li>
+			<li class="prognoz-item fal fa-smog">17</li>
+			<li class="prognoz-item fal fa-smog">16</li>
+			<li class="prognoz-item fal fa-smog">14</li>
+			<li class="prognoz-item fal fa-smog">12</li>
+		</ul>
+	</div>
+	<a href="#sydney" class="navigator fal fa-chevron-right"></a>
+</section>
+
+<section id="sydney" style="background-image: url(img/bg-sydney.jpg)">
+	<a href="#beijing" class="navigator fal fa-chevron-left"></a>
+	<div class="screen">
+		<header class="screen-header">
+			<span class="menu-button fal fa-bars"></span>
+			<div class="screen-header-center">
+				<h2 class="screen-title">Sydney</h2>
+				<span class="screen-time">Mon, 00:30</span>
+			</div>
+			<span class="menu-button fal fa-plus"></span>
+		</header>
+
+		<hr class="separator" />
+
+		<div class="now">
+			<span class="now-state fal fa-sun">Sunny</span>
+			<div class="now-data">
+				<span class="now-temperature">30</span>
+				<ul class="today-list">
+					<li class="today-item max">32</li>
+					<li class="today-item min">21</li>
+				</ul>
+			</div>
+		</div>
+
+		<hr class="separator" />
+
+		<ul class="details-list">
+			<li class="details-item fal fa-wind">1</li>
+			<li class="details-item fal fa-windsock">S</li>
+			<li class="details-item fal fa-raindrops">10</li>
+			<li class="details-item fal fa-humidity">30</li>
+		</ul>
+
+		<hr class="separator" />
+
+		<div class="sun">
+			<hr class="sun-ecliptic" />
+			<div class="sun-position">
+				<span class="fal fa-sunrise">04:35</span>
+				<span class="fal fa-moon-stars"></span>
+				<span class="fal fa-sunset">19:56</span>
+			</div>
+		</div>
+
+		<hr class="separator" />
+
+		<ul class="prognoz-list">
+			<li class="prognoz-item fal fa-cloud-sun">26</li>
+			<li class="prognoz-item fal fa-cloud-sun">28</li>
+			<li class="prognoz-item fal fa-sun">30</li>
+			<li class="prognoz-item fal fa-sun">32</li>
+			<li class="prognoz-item fal fa-sun">30</li>
+			<li class="prognoz-item fal fa-sun">25</li>
+			<li class="prognoz-item fal fa-cloud-sun">23</li>
+			<li class="prognoz-item fal fa-cloud-sun">20</li>
+		</ul>
+	</div>
+	<a href="#london" class="navigator fal fa-chevron-right"></a>
+</section>
+
+</body>
+<script src="data:text/javascript;base64,bGV0IGN1cnJlbnRTZWN0aW9uPW51bGwsaHRtbD1kb2N1bWVudC5kb2N1bWVudEVsZW1lbnQ7ZnVuY3Rpb24gc2VjdGlvblNldCgpe3ZhciB0O2xvY2F0aW9uLmhhc2gmJih0PWRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IobG9jYXRpb24uaGFzaCksY3VycmVudFNlY3Rpb249dCYmbnVsbCE9dD90Om51bGwpfWZ1bmN0aW9uIHNlY3Rpb25VcGRhdGUoKXtjdXJyZW50U2VjdGlvbiYmbnVsbCE9Y3VycmVudFNlY3Rpb24mJihodG1sLmNsYXNzTGlzdC5yZW1vdmUoInNtb290aCIpLGh0bWwuc2Nyb2xsVG8oY3VycmVudFNlY3Rpb24ub2Zmc2V0TGVmdCxjdXJyZW50U2VjdGlvbi5vZmZzZXRUb3ApKSxodG1sLmNsYXNzTGlzdC5hZGQoInNtb290aCIpfWRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoIkRPTUNvbnRlbnRMb2FkZWQiLGZ1bmN0aW9uKCl7c2VjdGlvblNldCgpLHNlY3Rpb25VcGRhdGUoKX0pLHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCJyZXNpemUiLHNlY3Rpb25VcGRhdGUpLHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCJoYXNoY2hhbmdlIixzZWN0aW9uU2V0LCExKTs="></script>
+</html>
